@@ -3,7 +3,7 @@ const {
 } = require('graphql-yoga')
 
 
-const links = [{
+let links = [{
     id: 1,
     description: `It's google`,
     url: `www.google.com`
@@ -19,23 +19,36 @@ const links = [{
 let idCount = links.length;
 const resolvers = {
     Query: {
-        info: () => {
-            return `This is the API of Hackernews Clone.`
+        link: (parent, args) => {
+            console.log(args.id);
+            let filtered;
+            links.forEach((link) => {
+                console.log(`Link ${link}: ${link.id}`);
+                if (link.id == args.id) {
+                    filtered = link;
+                }
+            })
+            console.log(`Filtered ${filtered}`)
+            return filtered;
         },
-        feed: () => {
-            return links;
-        },
+        /*  feed: () => {
+             return links;
+         }, */
     },
     Mutation: {
-        post: (parent, args) => {
-            const link = {
-                id: idCount++,
-                description: args.description,
-                url: args.url,
-            }
-            links.push(link);
-            return link;
-        }
+        deleteLink: (parent, args) => {
+            console.log(args);
+            let result;
+           links.forEach((link,index) => {
+                if(link.id == args.id){
+                    result = link;
+                }
+            })
+            return result;
+        },
+        updateLink: (parent, args) => {
+
+        },
     },
 }
 
