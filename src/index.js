@@ -1,61 +1,37 @@
+const Query = require('./resolvers/Query')
+const Mutation = require('./resolvers/Mutation')
+const User = require('./resolvers/User')
+const Link = require('./resolvers/Link')
+const Vote = require('./resolvers/Vote')
+const Subscription = require('./resolvers/Subscription')
+
 const {
     GraphQLServer
 } = require('graphql-yoga')
 
+const { prisma } = require('./generated/prisma-client');
 
-let links = [{
-    id: 1,
-    description: `It's google`,
-    url: `www.google.com`
-}, {
-    id: 2,
-    description: `It's Yahoo`,
-    url: `www.yahoo.com`
-}, {
-    id: 3,
-    description: `GraphQL is AWESOME`,
-    url: `www.graphqlisawesome.com`
-}];
-let idCount = links.length;
-const resolvers = {
-    Query: {
-        link: (parent, args) => {
-            console.log(args.id);
-            let filtered;
-            links.forEach((link) => {
-                console.log(`Link ${link}: ${link.id}`);
-                if (link.id == args.id) {
-                    filtered = link;
-                }
-            })
-            console.log(`Filtered ${filtered}`)
-            return filtered;
-        },
-        /*  feed: () => {
-             return links;
-         }, */
-    },
-    Mutation: {
-        deleteLink: (parent, args) => {
-            console.log(args);
-            let result;
-           links.forEach((link,index) => {
-                if(link.id == args.id){
-                    result = link;
-                }
-            })
-            return result;
-        },
-        updateLink: (parent, args) => {
 
-        },
-    },
+
+const resolvers = { 
+  Query,
+  Mutation,
+  Subscription,
+  User,
+  Link,
+  Vote,
 }
 
 
 const server = new GraphQLServer({
     typeDefs: './schema.graphql',
     resolvers,
+    context: request => {
+        return {
+          ...request,
+          prisma,
+        }
+      },
 })
 
 server.start(() => {
